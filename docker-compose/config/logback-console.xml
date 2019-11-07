@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<configuration>
+    <!-- do not include "base.xml", as it includes a console applender -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date|%level|%thread|%logger|%replace(%msg){'[\r\n]+', '_cr_'}%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC-STDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>500</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="STDOUT"/>
+    </appender>
+
+    <!-- restrict wicket and hibernate logs -->
+    <logger name="org.apache.wicket.util.resource.ResourceStreamLocator" level="INFO"/>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework.web" level="DEBUG"/>
+    <logger name="org.hibernate" level="WARN"/>
+	
+    <logger name="com.bellid.logging.pci.PCILogger" level="INFO" />
+
+    <logger name="org.springframework.ws.client.MessageTracing.sent" level="DEBUG"/>
+    <logger name="org.springframework.ws.server.MessageTracing.sent" level="DEBUG"/>
+    <logger name="org.springframework.ws.client.MessageTracing.received" level="TRACE"/>
+    <logger name="org.springframework.ws.server.MessageTracing.received" level="TRACE"/>
+
+    <logger name="com.bellid.asptsm" level="TRACE"/>
+    <logger name="com.bellid.tkm" level="TRACE"/>
+
+    <root level="INFO">
+        <appender-ref ref="ASYNC-STDOUT"/>
+    </root>
+</configuration>

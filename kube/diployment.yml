@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: estore-ws
+  labels:
+    app: estore
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: estore
+  template:
+    metadata:
+      labels:
+        app: estore
+    spec:
+#      volumes:
+#        - name: "estore-data"
+#          hostPath:
+#             path: "/var/lib/estore"
+      containers:
+       - name: estore
+         image: estore-app:0.0.1-SNAPSHOT
+         ports:
+          - containerPort: 8082
+            name: http
+            protocol: TCP
+#         resources:
+#              requests:
+#                cpu: "500m"
+#                memory: "128Mi"
+#              limits:
+#                  cpu: "1000m"
+#                  memory: "256Mi"
+#         volumeMounts:
+#              - mountPath: "/data"
+#                name: "estore-data"
+#         livenessProbe:
+#                httpGet:
+#                  path: /healthy
+#                  port: 8082
+#                initialDelaySeconds: 5
+#                timeoutSeconds: 1
+#                periodSeconds: 10
+#                failureThreshold: 3
+#         readinessProbe:
+#                httpGet:
+#                  path: /ready
+#                  port: 8082
+#                initialDelaySeconds: 30
+#                timeoutSeconds: 1
+#                periodSeconds: 10
+#                failureThreshold: 3
+---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: estore-service
+#  namespace: default
+#spec:
+#  ports:
+#  - port: 8082
+#    protocol: TCP
+#    targetPort: 8082
+#  selector:
+#    run: estore
