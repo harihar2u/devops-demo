@@ -1,60 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9e9bcf58-e0e1-4902-8978-e74c43f04d04" name="Default Changelist" comment="" />
+    <list default="true" id="9e9bcf58-e0e1-4902-8978-e74c43f04d04" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/rest/PingController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../estore-ws/src/main/resources/data-h2.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/compose/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/compose/config/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/compose/config/dev/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/compose/config/logback-console.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/compose/deploy.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/compose/deploy_stack.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/compose/docker-compose.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/compose/docker-stack.config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../estore-ws/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/config/WebConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/config/WebConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/controller/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/controller/HomeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/application11.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../estore-ws/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/css/creditly.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/css/easy-responsive-tabs.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/css/flexslider.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/css/font-awesome.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/css/jquery-ui1.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/css/popuo-box.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/fonts/FontAwesome.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/fonts/fontawesome-webfont.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/fonts/fontawesome-webfont.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/fonts/fontawesome-webfont.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/fonts/fontawesome-webfont.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/fonts/fontawesome-webfont.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/fonts/glyphicons-halflings-regular.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/fonts/glyphicons-halflings-regular.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/fonts/glyphicons-halflings-regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/fonts/glyphicons-halflings-regular.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/static/fonts/glyphicons-halflings-regular.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/about.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/checkout.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/contact.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/faqs.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/help.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/icons.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/payment.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/privacy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/product.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/product2.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/single.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/single2.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/terms.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/typography.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../estore-ws/src/test/java/com/online/estore/EstoreApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../estore-ws/src/test/java/com/online/estore/EstoreApplicationTests.java" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
+    <ignored path="$PROJECT_DIR$/../estore-ws/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/estore_devops$EstoreApplication.ic" NAME="EstoreApplication Coverage Results" MODIFIED="1573168842131" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.online.estore.*</FILTER>
+    </SUITE>
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="estore-devops" />
+  </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/docker-compose/config/dev/application.yml">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/kube/readme.md">
-          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-            <state split_layout="SPLIT">
-              <first_editor relative-caret-position="408">
-                <caret line="24" column="28" lean-forward="true" selection-start-line="24" selection-start-column="28" selection-end-line="24" selection-end-column="28" />
-              </first_editor>
-              <second_editor />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/docker-compose/README.md">
-          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-            <state split_layout="SPLIT">
-              <first_editor relative-caret-position="255">
-                <caret line="19" column="31" lean-forward="true" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
-              </first_editor>
-              <second_editor />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>h2-console</find>
+      <find>post</find>
+      <find>product_type</find>
+      <find>dev</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../estore-ws" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/docker-compose/README.md" />
         <option value="$PROJECT_DIR$/kube/readme.md" />
+        <option value="$PROJECT_DIR$/../estore-ws/pom.xml" />
+        <option value="$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/controller/HomeController.java" />
+        <option value="$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/config/WebConfig.java" />
+        <option value="$PROJECT_DIR$/../estore-ws/src/main/resources/templates/index.html" />
+        <option value="$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/rest/PingController.java" />
+        <option value="$PROJECT_DIR$/../estore-ws/src/main/resources/data-h2.sql" />
+        <option value="$PROJECT_DIR$/../estore-ws/src/main/resources/data.sql" />
+        <option value="$PROJECT_DIR$/../estore-ws/src/test/java/com/online/estore/EstoreApplicationTests.java" />
+        <option value="$PROJECT_DIR$/../estore-ws/src/main/resources/application.yaml" />
       </list>
     </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <option name="groupStructurally" value="true" />
+    <treeState>
+      <expand>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="estore-devops" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+        </path>
+      </expand>
+      <select />
+    </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-7" />
@@ -62,33 +128,20 @@
     <option name="width" value="1378" />
     <option name="height" value="685" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="estore-devops" type="b2602c69:ProjectViewProjectNode" />
-              <item name="estore-devops" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="estore-devops" type="b2602c69:ProjectViewProjectNode" />
-              <item name="estore-devops" type="462c0819:PsiDirectoryNode" />
-              <item name="kube" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="PackagesPane" />
+      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1573160317973" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1573172008080" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../estore-ws/pom.xml" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -108,15 +161,44 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.EstoreApplication">
     <configuration default="true" type="Applet">
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="EstoreApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.online.estore.EstoreApplication" />
+      <module name="estore-ws" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.online.estore.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EstoreApplicationTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="estore-ws" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.online.estore.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.online.estore" />
+      <option name="MAIN_CLASS_NAME" value="com.online.estore.EstoreApplicationTests" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -144,6 +226,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.EstoreApplication" />
+        <item itemvalue="JUnit.EstoreApplicationTests" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -158,45 +246,110 @@
     </task>
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="EstoreApplicationTests - 2019.11.08 at 05h 17m 44s.xml">
+      <configuration name="EstoreApplicationTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="EstoreApplicationTests - 2019.11.08 at 05h 19m 20s.xml">
+      <configuration name="EstoreApplicationTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="EstoreApplicationTests - 2019.11.08 at 05h 20m 11s.xml">
+      <configuration name="EstoreApplicationTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="EstoreApplicationTests - 2019.11.08 at 05h 21m 02s.xml">
+      <configuration name="EstoreApplicationTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="EstoreApplicationTests - 2019.11.08 at 05h 22m 53s.xml">
+      <configuration name="EstoreApplicationTests" configurationId="JUnit" />
+    </history-entry>
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25340393" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="DB Browser" sideWeight="0.497545" weight="0.32980332" />
+      <window_info id="Project Explorer" sideWeight="0.497545" weight="0.32980332" />
+      <window_info id="Job Explorer" sideWeight="0.497545" weight="0.32980332" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.497545" visible="true" weight="0.24659607" />
+      <window_info id="Structure" order="1" sideWeight="0.502455" side_tool="true" weight="0.24659607" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
       <window_info id="UI Designer" order="4" />
       <window_info id="Capture Tool" order="5" />
-      <window_info id="Favorites" order="6" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info id="Favorites" order="6" sideWeight="0.502455" side_tool="true" weight="0.24659607" />
+      <window_info anchor="bottom" id="DB Execution Console" />
+      <window_info anchor="bottom" id="Console" />
+      <window_info anchor="bottom" id="Messages" order="0" weight="0.66939443" />
+      <window_info anchor="bottom" id="Message" order="1" />
+      <window_info anchor="bottom" id="Find" order="2" />
+      <window_info anchor="bottom" id="Run" order="3" weight="0.69394433" />
+      <window_info anchor="bottom" id="Debug" order="4" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="7" weight="0.3289689" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.55482817" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Palette" order="3" />
-      <window_info anchor="right" id="Maven" order="4" />
+      <window_info anchor="right" id="Maven" order="4" weight="0.32980332" />
       <window_info anchor="right" id="Theme Preview" order="5" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
+      <window_info anchor="right" id="Coverage" order="8" side_tool="true" weight="0.32980332" />
     </layout>
+    <layout-to-restore>
+      <window_info id="DB Browser" order="0" />
+      <window_info id="Project Explorer" order="1" />
+      <window_info id="Job Explorer" order="2" />
+      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.24659607" />
+      <window_info id="Structure" order="4" side_tool="true" weight="0.25" />
+      <window_info id="Image Layers" order="5" />
+      <window_info id="Designer" order="6" />
+      <window_info id="UI Designer" order="7" />
+      <window_info id="Capture Tool" order="8" />
+      <window_info id="Favorites" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="DB Execution Console" order="0" />
+      <window_info anchor="bottom" id="Console" order="1" />
+      <window_info anchor="bottom" id="Messages" order="2" weight="0.66939443" />
+      <window_info anchor="bottom" id="Message" order="3" />
+      <window_info anchor="bottom" id="Find" order="4" />
+      <window_info anchor="bottom" id="Run" order="5" weight="0.69394433" />
+      <window_info anchor="bottom" id="Debug" order="6" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="7" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="8" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="9" weight="0.3289689" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.55482817" />
+      <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Maven" order="4" weight="0.32980332" />
+      <window_info anchor="right" id="Theme Preview" order="5" />
+      <window_info anchor="right" id="Capture Analysis" order="6" />
+      <window_info anchor="right" id="Palette&#9;" order="7" />
+      <window_info anchor="right" id="Coverage" order="8" side_tool="true" weight="0.32980332" />
+    </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/docker-compose/config/dev/application.yml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/docker-compose/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="255">
@@ -205,24 +358,130 @@
           <second_editor />
         </state>
       </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/kube/readme.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="35" lean-forward="true" selection-start-line="6" selection-start-column="35" selection-end-line="6" selection-end-column="35" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="408">
-            <caret line="24" column="28" lean-forward="true" selection-start-line="24" selection-start-column="28" selection-end-line="24" selection-end-column="28" />
+          <first_editor relative-caret-position="442">
+            <caret line="26" column="34" lean-forward="true" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
           </first_editor>
           <second_editor />
         </state>
       </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="35" lean-forward="true" selection-start-line="6" selection-start-column="35" selection-end-line="6" selection-end-column="35" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docker-compose/config/dev/application.yml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/config/WebConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="287">
+          <caret line="35" column="63" lean-forward="true" selection-start-line="35" selection-start-column="63" selection-end-line="35" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/resources/templates/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="17" column="35" selection-start-line="17" selection-start-column="35" selection-end-line="17" selection-end-column="35" />
+          <folding>
+            <element signature="n#div#0;n#div#6;n#body#0;n#html#0;n#!!top" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/controller/HomeController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="34" selection-start-line="11" selection-start-column="34" selection-end-line="11" selection-end-column="34" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#437#438#0" expanded="true" />
+            <element signature="e#467#468#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/rest/ProductController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/model/Address.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/model/ProductDetail.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/EstoreApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/resources/application1.properties" />
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/model/ProductType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="29" column="46" selection-start-line="29" selection-start-column="39" selection-end-line="29" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="64" column="39" selection-start-line="64" selection-start-column="36" selection-end-line="64" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/java/com/online/estore/rest/PingController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="15" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="15" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#258#259#0" expanded="true" />
+            <element signature="e#290#291#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/test/java/com/online/estore/EstoreApplicationTests.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="319">
+          <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/resources/data-h2.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../estore-ws/src/main/resources/application.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="26" column="23" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="23" />
         </state>
       </provider>
     </entry>
