@@ -1,17 +1,17 @@
-## Apply Configuration 
+##### Apply Configuration 
 kubectl apply -f ./diployment.yml
 
-## Deployment information
+#### Deployment information
 kubectl get pods --output=wide
 
 kubectl describe deployments <name>
 
-## ReplicaSet ###
+#### ReplicaSet ###
 kubectl get replicasets
 
 kubectl describe replicasets
 
-## Service object that exposes the deployment ##
+#### Service object that exposes the deployment ##
 kubectl expose deployment estore-ws --type=NodePort --name=estore-service
 
 kubectl get services
@@ -30,3 +30,6 @@ http://localhost:<NodePort>/estore
 kubectl delete services estore-service
 
 kubectl delete deployment,service --all
+
+###### Reference
+https://kubernetes.io/
