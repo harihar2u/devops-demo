@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "service.name" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "service.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Values.appVersion }}
+    app.kubernetes.io/component: {{ .Values.image.organization }}
+    app.kubernetes.io/part-of: {{ .Values.global.partOf }}
+    helm.sh/chart: {{ include "service.chart" . }}
+    metrics/spring-boot: 'true'
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port.app }}
+      targetPort: app
+      protocol: TCP
+      name: app
+{{- if not (eq .Values.global.environment "prod") }}
+    - port: {{ .Values.service.port.mgmt }}
+      targetPort: mgmt
+      protocol: TCP
+      name: mgmt
+{{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "service.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

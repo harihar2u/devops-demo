@@ -1,0 +1,174 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "service.name" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "service.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Values.appVersion }}
+    app.kubernetes.io/component: {{ .Values.image.organization }}
+    app.kubernetes.io/part-of: {{ .Values.global.partOf }}
+    helm.sh/chart: {{ include "service.chart" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "service.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "service.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/version: {{ .Values.appVersion }}
+        app.kubernetes.io/component: {{ .Values.image.organization }}
+        app.kubernetes.io/part-of: {{ .Values.global.partOf }}
+{{- if .Values.global.image.referenceImageDigest }}
+        app.kubernetes.io/image-tag: {{ .Values.image.tagStr }}
+{{- end }}
+      annotations:
+        checksum/application.config: {{ print .Values.application.config | sha256sum }}
+        checksum/application.logback: {{ print .Values.application.logback | sha256sum }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          #image: '{{ .Values.global.image.repositoryServer }}/{{ .Values.image.organization }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+          image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          ports:
+            - name: app
+              containerPort: 8081
+              protocol: TCP
+            - name: mgmt
+              containerPort: 8181
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: mgmt
+            initialDelaySeconds: {{ .Values.probe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.periodSeconds }}
+            timeoutSeconds: {{ .Values.probe.timeoutSeconds }}
+            failureThreshold: {{ .Values.probe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: mgmt
+            initialDelaySeconds: {{ .Values.probe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.periodSeconds }}
+            timeoutSeconds: {{ .Values.probe.timeoutSeconds }}
+            successThreshold: {{ .Values.probe.successThreshold }}
+            failureThreshold: {{ .Values.probe.failureThreshold }}
+          volumeMounts:
+{{- if eq .Values.global.logbackType "file" }}
+            - name: logs-hostpathvolume
+              mountPath: /home/appuser/logs
+{{- end }}
+{{- if .Values.global.cloudhsm.enabled }}
+            - name: ca-certvolume
+              mountPath: /opt/cloudhsm/etc/customerCA.crt
+              subPath: customerCA.crt
+              readOnly: true
+{{- end }}
+            - name: application-configvolume
+              mountPath: /opt/app/java/config/application.yml
+              subPath: application.yml
+              readOnly: true
+            - name: application-logback-configvolume
+              mountPath: /opt/app/java/config/logback.xml
+              subPath: logback.xml
+              readOnly: true
+          env:
+            - name: SPRING_CONFIG_LOCATION
+              value: file:./config/
+            - name: SPRING_PROFILES_ACTIVE
+{{- if .Values.springProfiles }}
+              value: boot,{{ .Values.springProfiles }}
+{{- else }}
+              value: boot
+{{- end }}
+            - name: DEPLOYMENT_NAME
+              value: {{ .Release.Name }}
+            - name: PERFINO
+              value: '{{ .Values.global.perfino }}'
+            - name: OVEROPS
+              value: '{{ .Values.global.overops }}'
+            - name: SERVICE_NAME
+              value: '{{ include "service.name" . }}'
+            - name: LOCAL_USER_ID
+              value: '{{ .Values.global.localUserID }}'
+            - name: CLOUDHSM_IP
+              value: '{{ .Values.global.cloudhsm.cloudHsmIP }}'
+{{- if .Values.global.ncipherhsm.enabled }}
+            - name: NFAST_SERVER_PORT
+              value: {{ .Values.global.ncipherhsm.serverPort | quote}}
+            - name: NFAST_SERVER_PRIVPORT
+              value: {{ .Values.global.ncipherhsm.serverPrivPort | quote}}
+{{- if .Values.global.ncipherhsm.ip }}
+            - name: NFAST_IP
+              value: {{ .Values.global.ncipherhsm.ip | quote}}
+{{- else }}
+            - name: NFAST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+{{- end }}
+{{- end }}
+
+{{ toYaml .Values.java_opts_env | indent 12 }}
+{{- if .Values.env }}
+{{ toYaml .Values.env | indent 12 }}
+{{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+      restartPolicy: {{ .Values.restartPolicy }}
+      volumes:
+{{- if eq .Values.global.logbackType "file" }}
+        - name: logs-hostpathvolume
+          hostPath:
+            path: {{ .Values.global.logsVolume }}
+            type: DirectoryOrCreate
+{{- end }}
+        - name: application-configvolume
+          configMap:
+            name: {{ include "service.name" . }}
+            items:
+              - key: application.yml
+                path: application.yml
+        - name: application-logback-configvolume
+          configMap:
+            name: {{ .Values.global.logConfigMapName }}
+            items:
+              - key: logback.xml
+                path: logback.xml
+{{- if .Values.global.cloudhsm.enabled }}
+        - name: ca-certvolume
+          configMap:
+            name: {{ .Values.global.cloudhsm.caConfigMapName }}
+            items:
+                - key: customerCA.crt
+                  path: customerCA.crt
+{{- end }}
+{{if .Values.global.imageRegistrySecret}}
+      imagePullSecrets:
+        - name: {{ .Values.global.imageRegistrySecret }}
+{{- end }}
+{{- if .Values.global.nodeSelector.enabled }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+{{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

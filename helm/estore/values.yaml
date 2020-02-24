@@ -1,0 +1,43 @@
+# Default values for estore.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+   logbackType: console
+   logConfigMapName: log-configmap
+   logsVolume:
+   ip:
+   serverPort: 9000
+   serverPrivPort: 9011
+   image:
+    #repositoryServer: nr-dtr.rambus.com
+    pullPolicy: Always
+    referenceImageDigest: false
+   nodeSelector:
+     enabled: false
+
+application:
+  logback: "config/logback-console.xml"
+
+db-estore:
+  nameOverride: db-estore
+  image:
+    repository: postgres
+    tag: 10.4
+  persistenceVolume:
+    mount: false
+    mountPath: /var/lib/postgresql/data
+    hostPath:
+        path: /estore-db
+
+estore-ws:
+  nameOverride: estore-ws
+  image:
+    repository: estore-app
+    tag: 0.0.1-SNAPSHOT
+    pullPolicy: IfNotPresent
+
+  service:
+    type: NodePort
+    port: 8020
+    nodePort: 32080
+

@@ -1,0 +1,16 @@
+{{- if .Values.global.cloudhsm.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.global.cloudhsm.caConfigMapName }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.global.cloudhsm.caConfigMapName }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Values.appVersion }}
+    app.kubernetes.io/component: {{ .Values.image.organization }}
+    app.kubernetes.io/part-of: {{ .Values.global.partOf }}
+    helm.sh/chart: {{ include "service.chart" . }}
+data:
+  customerCA.crt: |
+{{ .Values.global.cloudhsm.customerCA | indent 4}}
+{{- end }}

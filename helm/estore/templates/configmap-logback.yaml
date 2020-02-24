@@ -1,0 +1,16 @@
+{{- if .Values.global.logConfigMapGenerate }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.global.logConfigMapName }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.global.logConfigMapName }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: {{ .Values.global.sharedComponentName }}
+    app.kubernetes.io/part-of: {{ .Values.global.partOf }}
+    helm.sh/chart: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+data:
+  logback.xml: |
+{{ .Values.application.logback | indent 4}}
+{{- end }}

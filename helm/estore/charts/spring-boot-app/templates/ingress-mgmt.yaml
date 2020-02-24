@@ -1,0 +1,40 @@
+{{- if and (or (.Values.global.ingress.enabled) (.Values.ingress.enabled)) (not (eq .Values.global.environment "prod")) }}
+{{- $name := include "service.name" . -}}
+{{- $ingressPathMgmt := .Values.ingress.pathmgmt -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ $name }}-mgmt
+  labels:
+    app.kubernetes.io/name: {{ $name }}-mgmt
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Values.appVersion }}
+    app.kubernetes.io/component: {{ .Values.image.organization }}
+    app.kubernetes.io/part-of: {{ .Values.global.partOf }}
+    helm.sh/chart: {{ include "service.chart" . }}
+{{- with .Values.ingress.annotationsmgmt }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+{{- if .Values.ingress.tls }}
+  tls:
+  {{- range .Values.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . | quote }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+    - http:
+        paths:
+          - path: {{ $ingressPathMgmt }}(/|$)(.*)
+            backend:
+              serviceName: {{ $name }}
+              servicePort: mgmt
+{{- if .Values.ingress.host }}
+    host: {{ .Values.ingress.host | quote }}
+{{- end }}
+{{- end }}

@@ -2,7 +2,7 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     username: postgres
-    password:
+    password: postgres
     url: jdbc:postgresql://db-estore:5432/postgres
     tomcat:
       initial-size: 10

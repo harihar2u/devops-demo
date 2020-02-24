@@ -1,35 +1,36 @@
-##### Apply Configuration 
-kubectl apply -f ./diployment.yml
+## Apply Configuration 
+kubectl apply -f postgres-diployment.yml
+kubectl apply -f estore-ws-diployment.yml
 
-#### Deployment information
+curl http://localhost:32080/estore-ws
+
+## Deployment information
 kubectl get pods --output=wide
 
 kubectl describe deployments <name>
 
-#### ReplicaSet ###
+## ReplicaSet ###
 kubectl get replicasets
 
 kubectl describe replicasets
 
-#### Service object that exposes the deployment ##
-kubectl expose deployment estore-ws --type=NodePort --name=estore-service
-
 kubectl get services
 
-kubectl describe services <service name>
+kubectl describe services estore-service
 
 kubectl get pods --output=wide
 
 kubectl logs <IPOD name>
 
-curl http://external-ip:port
-
-http://localhost:<NodePort>/estore
+kubectl exec <IPOD name> -- ls
 
 ## Cleaning up ##
-kubectl delete services estore-service
+kubectl delete all --all
 
-kubectl delete deployment,service --all
+#### Rancher
 
-###### Reference
-https://kubernetes.io/
+https://github.com/rancher/rancher.git
+docker run -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher
+
+kubectl create configmap estore-config --from-file=D:/Archive/BackUp/estore/src/main/resources/application.yml
+

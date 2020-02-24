@@ -3,7 +3,7 @@ services:
   estore:
     image: "estore-app:latest"
     ports:
-       - 9010:8082
+       - 9010:8080
     deploy:
       replicas: 1
       resources:
@@ -35,7 +35,7 @@ services:
       - SPRING_CONFIG_LOCATION=file:./config/
       - SPRING_PROFILES_ACTIVE=boot #,${ENV}
   db-estore:
-    image: "postgres:latest"
+    image: "postgres:10.4"
     ports:
        - 23331:5432
     deploy:
@@ -68,4 +68,5 @@ networks:
 volumes:
   logs:
   dbdata-estore:
+
 

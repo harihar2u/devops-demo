@@ -1,0 +1,18 @@
+# requirements.yaml
+dependencies:
+  - name: spring-boot-app
+    version: 0.0.1
+    repository: file://./spring-boot-app
+    alias: estore-ws
+    condition: conditions.estore
+    tags:
+      - frontend
+      - base   
+  - name: persistence
+    version: 0.0.1
+    repository: file://./persistence
+    alias: db-estore
+    condition: conditions.db-store
+    tags:
+      - persistence
+      - db

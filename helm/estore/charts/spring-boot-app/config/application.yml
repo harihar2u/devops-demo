@@ -1,27 +1,28 @@
 spring:
   application:
-    name: estore
-  data:
-    rest.base-path: /api
-  cache:
-    caffeine.spec: maximumSize=500, expireAfterWrite=60s
+    name: estore-ws
   info:
     git:
       location: classpath:META-INF/git.properties
+  datasource:
+    url: jdbc:postgresql://db:5432/postgres
+    driver-class-name: org.postgresql.Driver
+    #username:
+    #password:
+
+logging:
+  config: /opt/app/java/config/logback.xml
 
 server:
   port: 8020
   servlet:
-    context-path: /estore/
+    context-path: /app
     session:
       cookie:
         http-only: true
   tomcat:
     remote-ip-header: x-forwarded-for
     protocol-header: x-forwarded-proto
-
-logging:
-  config: /opt/app/java/config/logback.xml
 
 management:
   info:
@@ -37,3 +38,4 @@ management:
       base-path: /
       exposure:
         include: "info,health,prometheus"
+

@@ -1,0 +1,14 @@
+estore-ws:
+  appVersion: {{ .Values.global.estore.version }}
+
+  image:
+    organization: estore
+    repository: estore-ws
+    tag: {{ .Values.global.estore.version }}{{ .Values.global.tagsuffix }}
+
+  ingress:
+    path: /estore/servlets
+    pathmgmt: /tkm-vault-mgmt
+
+  nodeSelector:
+    stack: {{ .Values.global.nodeSelector.InstanceGroup }}

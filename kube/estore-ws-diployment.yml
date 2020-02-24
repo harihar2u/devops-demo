@@ -1,0 +1,229 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: log-configmap
+  labels:
+    app.kubernetes.io/name: log-configmap
+data:
+  logback.xml: |
+    <?xml version="1.0"?>
+    <configuration>
+        <!-- to take advantage of the templating features provided by Boot -->
+        <!-- do not include "base.xml", as it includes a console applender -->
+        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+        <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator"/>
+        <property scope="context" name="LOG_DIR" value="${HOME}/logs"/>
+        <springProperty scope="context" name="APP_NAME" source="spring.application.name"  defaultValue="missing"/>
+
+        <!-- appenders -->
+         <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            	</encoder>
+            </appender>
+
+        <appender name="err" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <!-- try to log to catalina.base, fall back to the "logs" folder -->
+            <file>${LOG_DIR}/${APP_NAME}_err.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <FileNamePattern>${LOG_DIR}/${APP_NAME}_err-%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+            <!-- not a threshold filter, since we only want errors... -->
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>ERROR</level>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>DENY</onMismatch>
+            </filter>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %logger{10} [%file : %line] | %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <appender name="trace" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_DIR}/${APP_NAME}_trace.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <FileNamePattern>${LOG_DIR}/${APP_NAME}_trace-%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} | %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <appender name="ASYNC-ERR" class="ch.qos.logback.classic.AsyncAppender">
+            <queueSize>500</queueSize>
+            <discardingThreshold>0</discardingThreshold>
+            <appender-ref ref="err"/>
+        </appender>
+
+        <appender name="ASYNC-TRACE" class="ch.qos.logback.classic.AsyncAppender">
+            <queueSize>500</queueSize>
+            <discardingThreshold>0</discardingThreshold>
+            <appender-ref ref="trace"/>
+        </appender>
+
+
+        <logger name="org.apache.wicket.util.resource.ResourceStreamLocator" level="INFO"/>
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.springframework.web" level="INFO"/>
+        <logger name="org.hibernate" level="INFO"/>
+        <logger name="com.online.estore" level="TRACE"/>
+
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </configuration>
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: estore-config
+  labels:
+     app: estore-ws
+data:
+  application.yml: |
+    spring:
+      application:
+        name: estore-ws
+      config:
+          name: estore-config
+      info:
+        git:
+          location: classpath:META-INF/git.properties
+      datasource:
+        url: jdbc:postgresql://postgres:5432/postgres
+        username: postgres
+        password: postgres
+        type: com.zaxxer.hikari.HikariDataSource
+        hikari:
+          jdbc-url: jdbc:postgresql://postgres:5432/postgres
+          driver-class-name: org.postgresql.Driver
+          username: postgres
+          password: postgres
+          schema: postgres
+          maximum-pool-size: 50
+          minimum-idle: 10
+      jpa:
+        properties:
+          hibernate:
+             dialect: org.hibernate.dialect.PostgreSQLDialect
+             jdbc.lob.non_contextual_creation: true
+    
+    logging:
+      config: /opt/app/java/config/logback.xml
+    
+    server:
+      port: 8020
+      tomcat:
+        remote-ip-header: x-forwarded-for
+        protocol-header: x-forwarded-proto
+    
+    management:
+      info:
+        git:
+          mode: full
+      endpoint:
+        health:
+          show-details: always
+      server:
+        port: 8181
+      endpoints:
+        web:
+          base-path: /
+          exposure:
+            include: "*"          
+  
+ 
+---   
+  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: estore-ws
+  labels:
+    app: estore
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: estore
+  template:
+    metadata:
+      labels:
+        app: estore
+    spec:
+      containers:
+       - name: estore
+         image: estore-app:0.0.1-SNAPSHOT
+         ports:
+          - containerPort: 8020
+            name: http
+            protocol: TCP
+         resources:
+              requests:
+                cpu: "1024m"
+                memory: "1024Mi"
+              limits:
+                  cpu: "2048m"
+                  memory: "2048Mi"
+         livenessProbe:
+                httpGet:
+                  path: /healthy
+                  port: 8020
+                initialDelaySeconds: 60
+                timeoutSeconds: 5
+                periodSeconds: 5
+                failureThreshold: 3
+         volumeMounts:
+            - name: application-configvolume
+              mountPath: /opt/app/java/config/application.yml
+              subPath: application.yml
+              readOnly: true
+            - name: application-logback-configvolume
+              mountPath: /opt/app/java/config/logback.xml
+              subPath: logback.xml
+              readOnly: true
+#         env:
+#           - name: SPRING_CONFIG_LOCATION
+#             value: file:./config/
+#           - name: SPRING_PROFILES_ACTIVE
+#             value: boot
+      restartPolicy: Always
+      volumes:
+        - name: application-configvolume
+          configMap:
+              name: estore-config
+              items:
+                - key: application.yml
+                  path: application.yml
+        - name: application-logback-configvolume
+          configMap:
+               name: log-configmap
+               items:
+                 - key: logback.xml
+                   path: logback.xml
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: estore-service
+  namespace: default
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: http
+      nodePort: 32080
+  selector:
+    app: estore
