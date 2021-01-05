@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: estore-web
+  info:
+    git:
+      location: classpath:META-INF/git.properties
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: {{ .Values.estore.datasource.url }}
+    hikari:
+      jdbc-url: {{ .Values.estore.datasource.url }}
+      driver-class-name: {{ .Values.estore.datasource.driver }}
+      username: {{ .Values.estore.datasource.username }}
+      password: {{ .Values.estore.datasource.password }}
+      schema: {{ .Values.estore.datasource.schema }}
+      maximum-pool-size: {{ .Values.estore.datasource.maximumPoolSize }}
+      minimum-idle: {{ .Values.estore.datasource.minimumIdle }}
+  flyway:
+    locations: {{ .Values.estore.flyway.locations }}
+
+server:
+  port: 8081
+  servlet:
+    context-path: /estore-ws
+    session:
+      cookie:
+        http-only: true
+  tomcat:
+    remote-ip-header: x-forwarded-for
+    protocol-header: x-forwarded-proto
+management:
+  info:
+    git:
+      mode: {{ .Values.global.management.gitinfomode }}
+  endpoint:
+    health:
+      show-details: {{ .Values.global.management.healthshowdetails }}
+  server:
+    port: 8181
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: "{{ .Values.global.management.endpoints }}"
+
+
+

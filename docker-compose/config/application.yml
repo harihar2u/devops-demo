@@ -1,0 +1,23 @@
+spring:
+  data:
+    rest.base-path: /api
+  datasource:
+    database: POSTGRESQL
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://db-estore:5432/postgres
+  flyway:
+      enabled: true
+      url: jdbc:postgresql://db-estore:5432/postgres
+      username: postgres
+      password: postgres
+      locations: classpath:db/migration/postgres
+
+server:
+  port: 8082
+  servlet:
+    context-path: /estore-ws
+logging:
+  config: /opt/app/java/config/logback.xml
+

@@ -1,15 +1,26 @@
-appVersion: 1.0.0-SNAPSHOT
+global:
+  partOf: project-demo
+#  imageRegistrySecret: dtrcred
+  image:
+    repositoryServer: harihar2u/project-demo
+    pullPolicy: Always
+    referenceImageDigest: true
+  nodeSelector:
+    enabled: true
 
+
+nameOverride: ""
+appVersion: 1.0.0-SNAPSHOT
 image:
   organization: estore
-
+  repository: postgres
+  tag: 1.0.0-SNAPSHOT
+  tagStr: 1.0.0-SNAPSHOT
 container:
   port: 1234
-
 service:
   type: NodePort
   port: 8080
-
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -21,33 +32,17 @@ resources:
   limits:
     memory: 1Gi
     cpu: "2"
-
-env: []
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-livenessProbe:
-    exec:
-      command:
-         - /bin/sh
-         - -c
-         - docker-healthcheck.sh
-
-nameOverride: ""
-
 persistenceVolume:
   mount: true
-  mountPath: /var/lib/postgresql/data
-  hostPath: db-estore
+  mountPath:
+  hostPath:
 
-global:
-  partOf: estore-product
-  imageRegistrySecret: dtrcred
-  image:
-    repositoryServer: localhost
-    pullPolicy: Always
-    referenceImageDigest: true
+env: []
+nodeSelector: {}
+tolerations: []
+affinity: {}
+livenessProbe: {}
+
+
+
+

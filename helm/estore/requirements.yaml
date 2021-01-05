@@ -1,18 +1,47 @@
-# requirements.yaml
 dependencies:
   - name: spring-boot-app
-    version: 0.0.1
+    version: 0.1.0
     repository: file://./spring-boot-app
-    alias: estore-ws
-    condition: conditions.estore
+    alias: estore-web
+    condition: conditions.estore-web
     tags:
       - frontend
-      - base   
+      - base
+      - all
+  - name: spring-boot-app
+    version: 0.1.0
+    repository: file://./spring-boot-app
+    alias: estore-ws
+    condition: conditions.estore-ws
+    tags:
+      - backend
+      - base
+      - all
+  - name: spring-boot-app
+    version: 0.1.0
+    repository: file://./spring-boot-app
+    alias: estore-auth
+    condition: conditions.estore-auth
+    tags:
+      - frontend
+      - base
+      - all
   - name: persistence
-    version: 0.0.1
+    version: 0.1.0
     repository: file://./persistence
     alias: db-estore
-    condition: conditions.db-store
+    condition: conditions.db-estore
     tags:
       - persistence
       - db
+      - mock
+      - all
+  - name: db-migration
+    version: 0.1.0
+    repository: file://./db-migration
+    alias: db-migration-estore
+    condition: conditions.db-migration-estore
+    tags:
+      - db-migration
+      - mock
+      - all

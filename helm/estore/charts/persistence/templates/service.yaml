@@ -16,6 +16,7 @@ spec:
       targetPort: persistence
       protocol: TCP
       name: persistence
+      nodePort: 32080
   selector:
     app.kubernetes.io/name: {{ include "persistence.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

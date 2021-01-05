@@ -1,22 +1,13 @@
-# Default values for estore.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+#Overide global value of the spring boot application chart value
 global:
-   logbackType: console
-   logConfigMapName: log-configmap
-   logsVolume:
-   ip:
-   serverPort: 9000
-   serverPrivPort: 9011
-   image:
-    #repositoryServer: nr-dtr.rambus.com
-    pullPolicy: Always
-    referenceImageDigest: false
-   nodeSelector:
-     enabled: false
 
-application:
-  logback: "config/logback-console.xml"
+
+conditions:
+  estore-auth: true
+  estote-ws: false
+  estote-web: false
+  db-estore: true
+  db-migration-estore: false
 
 db-estore:
   nameOverride: db-estore
@@ -27,17 +18,48 @@ db-estore:
     mount: false
     mountPath: /var/lib/postgresql/data
     hostPath:
-        path: /estore-db
-
+      path: /db-estore
+    service:
+      type: NodePort
+      port:
+        app: 8080
+        mgmt: 9080
+      nodePort: 32080
+estore-web:
+  nameOverride: estore-web
+  image:
+    repository: estore-web
+    tag: 0.0.1-SNAPSHOT
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port:
+      app: 8081
+      mgmt: 9081
+    nodePort: 32081
 estore-ws:
   nameOverride: estore-ws
   image:
-    repository: estore-app
+    repository: estore-rest
     tag: 0.0.1-SNAPSHOT
     pullPolicy: IfNotPresent
-
   service:
     type: NodePort
-    port: 8020
-    nodePort: 32080
+    port:
+      app: 8082
+      mgmt: 9082
+    nodePort: 32082
+estore-auth:
+  nameOverride: estore-auth
+  image:
+    repository: estore-auth-rest
+    tag: 0.0.1-SNAPSHOT
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port:
+      app: 8083
+      mgmt: 9083
+    nodePort: 32083
+
 

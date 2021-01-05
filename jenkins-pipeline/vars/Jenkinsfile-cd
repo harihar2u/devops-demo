@@ -1,0 +1,234 @@
+#!groovy
+
+backtonormal = false
+
+node('production') {
+    try {
+        withDockerServer([credentialsId: 'continuous', uri: 'nr-ucp.rambus.com:443']) {
+          wipeWS()
+          cloneRepo()
+
+          timeout(time: 15, unit: 'MINUTES') {
+              if (null != STACK_NAME && "" != STACK_NAME) {
+                  remove(STACK_NAME)
+                  deploy(STACK_NAME)
+              } else {
+                  remove('coles-qa')
+                  deploy('coles-qa')
+                  //deploy('coles-dev')
+                  //deploy('coles-staging')
+              }
+          }
+
+          if (!hudson.model.Result.SUCCESS.toString().equals(currentBuild.getPreviousBuild().getResult())) {
+              backtonormal = true
+          }
+          currentBuild.result = 'SUCCESS'
+        }
+    } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException | hudson.AbortException abortex) {
+        currentBuild.result = 'ABORTED'
+        throw abortex
+    } catch (Exception err) {
+        currentBuild.result = 'FAILURE'
+        throw err
+    } finally {
+        sendNotification()
+        wipeWS()
+    }
+}
+
+private void remove(def stackName) {
+    echo "${stackName} stack is being removed.."
+    sh(script: "docker stack rm ${stackName}", returnStatus: true)
+    sleep 10
+    sh(script: "docker rm \$(docker ps -aq -f name=${stackName})", returnStatus: true)
+}
+
+private void deploy(def stackName) {
+    prepareStackEnvVariables(stackName)
+    removeDBVolumesIfNecessary(stackName)
+    deployStack(stackName)
+    waitForDeploymentCompletes(stackName)
+}
+
+private void removeDBVolumesIfNecessary(def stackName) {
+    stage("RemoveDBVolumes#${stackName}") {
+        removeDBVolume(stackName, 'pg-data-upp', 'db-upp', readMavenPom(file: 'pom.xml').properties['coles-dps.version'])
+        removeDBVolume(stackName, 'dbdata-tkm', 'db-tkm', readMavenPom(file: 'pom.xml').properties['tgtestdata.version'])
+        removeDBVolume(stackName, 'dbdata-a-sptsm', 'db-a-sptsm', readMavenPom(file: 'pom.xml').properties['tgtestdata.version'])
+    }
+}
+
+private void removeDBVolume(def stackName, def dbVolumeName, def dbServiceName, def targetVersion) {
+    def serviceName = "${stackName}_${dbServiceName}"
+    def volumes = null
+
+    try {
+        volumes = tobeRemovedDBVolumes(serviceName, targetVersion)
+    } catch (Exception ex) {
+        echo ex.message
+        echo "Volume names could not be extracted from service record. Probably service is not running. Removing default volume.."
+        removeVolume("${stackName}_${dbVolumeName}")
+    }
+
+    if (volumes != null) {
+        removeService(serviceName)
+
+        volumes.each {
+            removeVolume(it.Source[0])
+        }
+    }
+}
+
+private void removeService(serviceName) {
+    echo "Removing service ${serviceName} to remove its volumes.."
+    sh "docker service rm ${serviceName}"
+}
+
+private tobeRemovedDBVolumes(def serviceName, def targetVersion) {
+    def service = readJSON(text: sh(script: "docker service inspect ${serviceName}", returnStdout: true).trim())
+    def containerSpec = service.Spec.TaskTemplate.ContainerSpec
+    def imegeParts = containerSpec.Image[0].split('@')
+    def currentDigest = imegeParts[1]
+    echo "Current ${serviceName} service is built on digest: ${currentDigest}"
+
+    def dbImage = imegeParts[0].split(':')[0]
+    def targetImageName = dbImage + ':' + targetVersion
+
+    sh "docker pull ${targetImageName}"
+    def targetImage = readJSON(text: sh(script: "docker inspect ${targetImageName}", returnStdout: true).trim())
+    def targetDigest = targetImage.RepoDigests[0][0].split('@')[1]
+    echo "Latest image digest: ${targetDigest}"
+
+    if (currentDigest == targetDigest) {
+        echo "DB image has not been changed. No need to remove the volumes.."
+        return null
+    }
+
+    return containerSpec.Mounts
+}
+
+private void removeVolume(def volumeName) {
+    echo "Removing ${volumeName} .."
+    if (0 != sh(script: "docker volume inspect ${volumeName}", returnStatus: true)) {
+		// volume does not exist
+        return
+    }
+    while (0 != sh(script: "docker volume rm --force ${volumeName}", returnStatus: true)) {
+        sleep 2
+    }
+}
+
+private void cloneRepo() {
+    stage('Clone') {
+        checkout scm: [$class: 'GitSCM',
+                       branches: [[name: "${TARGET_BRANCH}"]],
+                       userRemoteConfigs: [[url: 'ssh://git@nr-bitbucket.rambus.com:7999/col/coles-dps.git', credentialsId: 'ada0dfb7-9075-4c9d-9977-5e85fc3ded90']]],
+                 changelog: false, poll: false
+    }
+}
+
+private void prepareStackEnvVariables(def stackName) {
+    stage("PrepStackEnvVars#${stackName}") {
+        def pom = readMavenPom(file: 'pom.xml')
+
+        def registryURL = 'nr-dtr.rambus.com'
+        def composeprojname = stackName
+        def requestedHost = "nr-${stackName}.rambus.com"
+        def deploymentName = "${stackName}#${BUILD_NUMBER}:${pom.version}"
+        def athenaDatabaseName = stackName.replaceAll("-","_")
+
+        def cmn_version = pom.parent.version
+        def upp_version = pom.properties['upp.version']
+        def uppgw_version = pom.properties['uppgw.version']
+        def tkm_version = pom.properties['tkm.version']
+        def asptsm_version = pom.properties['asptsm.version']
+        def dvmcsp_version = pom.properties['dvmcsp.version']
+        def dpsui_version = pom.properties['dpsui.version']
+        def dpslcm_version = pom.properties['dpslcm.version']
+        def coles_project_version = pom.properties['coles-dps.version']
+        def tgtestdata_version = pom.properties['tgtestdata.version']
+        def upptestdata_version = pom.properties['upptestdata.version']
+
+        sh script: "cp docker-compose.env .env"
+        sh script: "sed -i s/@compose.project.name@/${composeprojname}/ .env"
+        sh script: "sed -i s/@deployment.name@/${deploymentName}/ .env"
+        sh script: "sed -i s/@common.version@/${cmn_version}/ .env"
+        sh script: "sed -i s/@upp.version@/${upp_version}/ .env"
+        sh script: "sed -i s/@uppgw.version@/${uppgw_version}/ .env"
+        sh script: "sed -i s/@tkm.version@/${tkm_version}/ .env"
+        sh script: "sed -i s/@asptsm.version@/${asptsm_version}/ .env"
+        sh script: "sed -i s/@dvmcsp.version@/${dvmcsp_version}/ .env"
+        sh script: "sed -i s/@dpsui.version@/${dpsui_version}/ .env"
+        sh script: "sed -i s/@dpslcm.version@/${dpslcm_version}/ .env"
+        sh script: "sed -i s/@coles-dps.version@/${coles_project_version}/ .env"
+        sh script: "sed -i s/@tgtestdata.version@/${tgtestdata_version}/ .env"
+        sh script: "sed -i s/@upptestdata.version@/${upptestdata_version}/ .env"
+        if (null != STACK_HTTPS && "true" == STACK_HTTPS) {
+            sh script: "sed -i 's|@baseurl@|https://${requestedHost}|g' .env"
+        }else{
+            sh script: "sed -i 's|@baseurl@|http://${requestedHost}|g' .env"
+        }
+        sh script: "sed -i -e \"\\\$aDOCKER_REGISTRY=${registryURL}\" .env"
+        sh script: "sed -i -e \"\\\$aLOCAL_USER_ID=`id -u $USER`\" .env"
+        sh script: "sed -i -e \"\\\$aREQUESTED_HOST=${requestedHost}\" .env"
+        withCredentials([usernamePassword(credentialsId: 'awsses_credentials', usernameVariable: 'SMTP_LOGIN', passwordVariable: 'SMTP_PASSWORD')]) {
+            sh script: "sed -i -e \"\\\$aSMTP_LOGIN=${SMTP_LOGIN}\" .env"
+            sh script: "sed -i -e \"\\\$aSMTP_PASSWORD=${SMTP_PASSWORD}\" .env"
+        }
+        withCredentials([usernamePassword(credentialsId: 'jenkins-aws-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+            sh script: "sed -i -e \"\\\$aAWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}\" .env"
+            sh script: "sed -i -e \"\\\$aAWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}\" .env"
+        }
+        sh script: "sed -i  s/ATHENA_DATABASE_NAME=.*\$/ATHENA_DATABASE_NAME=${athenaDatabaseName}/ .env"
+
+    }
+}
+
+private void deployStack(def stackName) {
+    stage("DeployStack#${stackName}") {
+        sh script: "./deploy_${stackName}_stack.sh"
+    }
+}
+
+private void waitForDeploymentCompletes(def stackName) {
+    stage("WaitForDeploymentCompletes#${stackName}") {
+        int notDeployedServiceCount = -1
+        while (0 != notDeployedServiceCount) {
+            sleep 10
+            notDeployedServiceCount = Integer.valueOf(sh(script: "docker stack services ${stackName} | grep 0/1 | wc -l", returnStdout: true).trim())
+            echo "Waiting for ${notDeployedServiceCount} services to be deployed .."
+        }
+    }
+}
+
+private void sendNotification() {
+    stage('SendNotification') {
+        if ('SUCCESS' != currentBuild.result || backtonormal) {
+            def resultStr = backtonormal ? 'BACK_TO_NORMAL' : currentBuild.result
+            //hipchatSend(notify: true, room: '230', credentialId: 'hipchat_devops_token', color: getColor(currentBuild.result), message: "<b><a href=\"${BUILD_URL}\">${JOB_NAME}#${BUILD_NUMBER}</a> ${resultStr}</b>")
+            emailext body: "${BUILD_URL}", subject: "${resultStr}: ${BUILD_TAG}", recipientProviders: [[$class: 'UpstreamComitterRecipientProvider']], to: 'ccirit@rambus.com,uarpaci@rambus.com,rwieman@rambus.com,dschell@rambus.com'
+        }
+    }
+}
+
+private String getColor(state) {
+    switch (state) {
+        case 'SUCCESS':
+            return 'GREEN'
+        case 'UNSTABLE':
+            return 'YELLOW'
+        case 'FAILURE':
+            return 'RED'
+        case 'ABORTED':
+            return 'GRAY'
+        default:
+            return 'RANDOM'
+    }
+}
+
+private void wipeWS() {
+    stage('WipeWS') {
+        step([$class: 'WsCleanup'])
+    }
+}

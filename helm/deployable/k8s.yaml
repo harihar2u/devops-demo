@@ -1,32 +1,244 @@
 ---
-# Source: estore/charts/spring-boot-app/templates/configmap.yaml
+# Source: estore-demo/charts/estore-auth/templates/configmap-logback.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: spring-boot-app
+  name: log-configmap
   labels:
-    app.kubernetes.io/name: spring-boot-app
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: log-configmap
+    app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
     app.kubernetes.io/component: estore
-    app.kubernetes.io/part-of: payments-product
-    helm.sh/chart: spring-boot-app-0.1.0
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-auth-0.1.0
+data:
+  logback.xml: |
+---
+# Source: estore-demo/charts/estore-auth/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: estore-auth
+  labels:
+    app.kubernetes.io/name: estore-auth
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-auth-0.1.0
 data:
   application.yml: |
-    
+    ---
+    # Source: config/templates/estore-auth/application.yaml
+    spring:
+      application:
+        name: estore-auth
+      info:
+        git:
+          location: classpath:META-INF/git.properties
+      jpa:
+        database: POSTGRESQL
+      datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        hikari:
+          jdbc-url: jdbc:postgresql://db-estore:5432/postgres
+          driver-class-name: org.postgresql.Driver
+          username: postgres
+    #      password: postgres
+    #      schema: postgres
+          maximum-pool-size: 10
+          minimum-idle: 5
+      flyway:
+        locations: classpath:db/migration/postgres
+    server:
+      port: 8083
+      servlet:
+        context-path: /estore-auth
+        session:
+          cookie:
+            http-only: true
+      tomcat:
+        remote-ip-header: x-forwarded-for
+        protocol-header: x-forwarded-proto
+    management:
+      info:
+        git:
+          mode: full
+      endpoint:
+        health:
+          show-details: always
+      server:
+        port: 8181
+      endpoints:
+        web:
+          base-path: /
+          exposure:
+            include: "*"
 ---
-# Source: estore/charts/persistence/templates/service.yaml
+# Source: estore-demo/charts/estore-web/templates/configmap-logback.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: log-configmap
+  labels:
+    app.kubernetes.io/name: log-configmap
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-web-0.1.0
+data:
+  logback.xml: |
+---
+# Source: estore-demo/charts/estore-web/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: estore-web
+  labels:
+    app.kubernetes.io/name: estore-web
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-web-0.1.0
+data:
+  application.yml: |
+    ---
+    # Source: config/templates/estore-web/application.yaml
+    spring:
+      application:
+        name: estore-web
+      info:
+        git:
+          location: classpath:META-INF/git.properties
+      datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:postgresql://db-estore:5432/postgres
+        hikari:
+          jdbc-url: jdbc:postgresql://db-estore:5432/postgres
+          driver-class-name: org.postgresql.Driver
+          username: postgres
+          password: postgres
+          schema: postgres
+          maximum-pool-size: 10
+          minimum-idle: 5
+      flyway:
+        locations: classpath:db/migration/postgres
+    
+    server:
+      port: 8081
+      servlet:
+        context-path: /estore-ws
+        session:
+          cookie:
+            http-only: true
+      tomcat:
+        remote-ip-header: x-forwarded-for
+        protocol-header: x-forwarded-proto
+    management:
+      info:
+        git:
+          mode: full
+      endpoint:
+        health:
+          show-details: always
+      server:
+        port: 8181
+      endpoints:
+        web:
+          base-path: /
+          exposure:
+            include: "*"
+---
+# Source: estore-demo/charts/estore-ws/templates/configmap-logback.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: log-configmap
+  labels:
+    app.kubernetes.io/name: log-configmap
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-ws-0.1.0
+data:
+  logback.xml: |
+---
+# Source: estore-demo/charts/estore-ws/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: estore-ws
+  labels:
+    app.kubernetes.io/name: estore-ws
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-ws-0.1.0
+data:
+  application.yml: |
+    ---
+    # Source: config/templates/estore-ws/application.yaml
+    spring:
+      application:
+        name: estore-ws
+      info:
+        git:
+          location: classpath:META-INF/git.properties
+      datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:postgresql://db-estore:5432/postgres
+        hikari:
+          jdbc-url: jdbc:postgresql://db-estore:5432/postgres
+          driver-class-name: org.postgresql.Driver
+          username: postgres
+          password: postgres
+          schema: postgres
+          maximum-pool-size: 10
+          minimum-idle: 5
+      flyway:
+        locations: classpath:db/migration/postgres
+    
+    server:
+      port: 8082
+      servlet:
+        context-path: /estore-ws
+        session:
+          cookie:
+            http-only: true
+      tomcat:
+        remote-ip-header: x-forwarded-for
+        protocol-header: x-forwarded-proto
+    management:
+      info:
+        git:
+          mode: full
+      endpoint:
+        health:
+          show-details: always
+      server:
+        port: 8181
+      endpoints:
+        web:
+          base-path: /
+          exposure:
+            include: "*"
+---
+# Source: estore-demo/charts/db-estore/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: persistence
+  name: db-estore
   labels:
-    app.kubernetes.io/name: persistence
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: db-estore
+    app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
     app.kubernetes.io/component: estore
-    app.kubernetes.io/part-of: estore-product
-    helm.sh/chart: persistence-0.1.0
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: db-estore-0.1.0
 spec:
   type: NodePort
   ports:
@@ -34,86 +246,139 @@ spec:
       targetPort: persistence
       protocol: TCP
       name: persistence
+      nodePort: 32080
   selector:
-    app.kubernetes.io/name: persistence
-    app.kubernetes.io/instance: release-name
-
+    app.kubernetes.io/name: db-estore
+    app.kubernetes.io/instance: RELEASE-NAME
 ---
-# Source: estore/charts/spring-boot-app/templates/service.yaml
+# Source: estore-demo/charts/estore-auth/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: spring-boot-app
+  name: estore-auth
   labels:
-    app.kubernetes.io/name: spring-boot-app
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: estore-auth
+    app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
     app.kubernetes.io/component: estore
-    app.kubernetes.io/part-of: payments-product
-    helm.sh/chart: spring-boot-app-0.1.0
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-auth-0.1.0
     metrics/spring-boot: 'true'
 spec:
-  type: ClusterIP
+  type: NodePort
+  ports:
+    - port: 8083
+      targetPort: app
+      protocol: TCP
+      name: app
+#
+#    - port: 9083
+#      targetPort: mgmt
+#      protocol: TCP
+#      name: mgmt
+#
+  selector:
+    app.kubernetes.io/name: estore-auth
+    app.kubernetes.io/instance: RELEASE-NAME
+---
+# Source: estore-demo/charts/estore-web/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: estore-web
+  labels:
+    app.kubernetes.io/name: estore-web
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-web-0.1.0
+    metrics/spring-boot: 'true'
+spec:
+  type: NodePort
   ports:
     - port: 8081
       targetPort: app
       protocol: TCP
       name: app
-    - port: 8181
-      targetPort: mgmt
-      protocol: TCP
-      name: mgmt
+#
+#    - port: 9081
+#      targetPort: mgmt
+#      protocol: TCP
+#      name: mgmt
+#
   selector:
-    app.kubernetes.io/name: spring-boot-app
-    app.kubernetes.io/instance: release-name
-
+    app.kubernetes.io/name: estore-web
+    app.kubernetes.io/instance: RELEASE-NAME
 ---
-# Source: estore/charts/persistence/templates/deployment.yaml
+# Source: estore-demo/charts/estore-ws/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: estore-ws
+  labels:
+    app.kubernetes.io/name: estore-ws
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-ws-0.1.0
+    metrics/spring-boot: 'true'
+spec:
+  type: NodePort
+  ports:
+    - port: 8082
+      targetPort: app
+      protocol: TCP
+      name: app
+#
+#    - port: 9082
+#      targetPort: mgmt
+#      protocol: TCP
+#      name: mgmt
+#
+  selector:
+    app.kubernetes.io/name: estore-ws
+    app.kubernetes.io/instance: RELEASE-NAME
+---
+# Source: estore-demo/charts/db-estore/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: persistence
+  name: db-estore
   labels:
-    app.kubernetes.io/name: persistence
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: db-estore
+    app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
     app.kubernetes.io/component: estore
-    app.kubernetes.io/part-of: estore-product
-    helm.sh/chart: persistence-0.1.0
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: db-estore-0.1.0
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: persistence
-      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: db-estore
+      app.kubernetes.io/instance: RELEASE-NAME
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: persistence
-        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/name: db-estore
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/version: 1.0.0-SNAPSHOT
         app.kubernetes.io/component: estore
-        app.kubernetes.io/part-of: estore-product
+        app.kubernetes.io/part-of: project-demo
+        app.kubernetes.io/image-tag: 1.0.0-SNAPSHOT
     spec:
       containers:
-        - name: persistence
-          #image: 'localhost/estore/:'
-          image: ':'
+        - name: db-estore
+          image: 'postgres:10.4'
           imagePullPolicy: Always
           ports:
             - name: persistence
               containerPort: 1234
               protocol: TCP
-          livenessProbe:
-            exec:
-              command:
-              - /bin/sh
-              - -c
-              - docker-healthcheck.sh
-            
-          volumeMounts:
-            - name: persistencevolume
-              mountPath: /var/lib/postgresql/data
+#          livenessProbe:
+#            {}
           resources:
             limits:
               cpu: "2"
@@ -121,35 +386,25 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
-            
-      volumes:
-        - name: persistencevolume
-          hostPath:
-            path: db-estore
-            type: DirectoryOrCreate
-
-      imagePullSecrets:
-        - name: dtrcred
-
 ---
-# Source: estore/charts/spring-boot-app/templates/deployment.yaml
+# Source: estore-demo/charts/estore-auth/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-boot-app
+  name: estore-auth
   labels:
-    app.kubernetes.io/name: spring-boot-app
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: estore-auth
+    app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
     app.kubernetes.io/component: estore
-    app.kubernetes.io/part-of: payments-product
-    helm.sh/chart: spring-boot-app-0.1.0
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-auth-0.1.0
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: spring-boot-app
-      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: estore-auth
+      app.kubernetes.io/instance: RELEASE-NAME
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -158,20 +413,19 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: spring-boot-app
-        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/name: estore-auth
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/version: 1.0.0-SNAPSHOT
         app.kubernetes.io/component: estore
-        app.kubernetes.io/part-of: payments-product
+        app.kubernetes.io/part-of: project-demo
       annotations:
-        checksum/application.config: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        checksum/application.config: 21770937db5c99385a008d10c241470e2f913e7eb338b7cc952cbac562ade316
         checksum/application.logback: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
     spec:
       containers:
-        - name: spring-boot-app
-          #image: 'localhost/estore/:'
-          image: ':'
-          imagePullPolicy: Always
+        - name: estore-auth
+          image: 'harihar2u/project-demo/estore/estore-auth-rest:0.0.1-SNAPSHOT'
+#          imagePullPolicy: Always
           ports:
             - name: app
               containerPort: 8081
@@ -211,25 +465,21 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               value: boot
             - name: DEPLOYMENT_NAME
-              value: release-name
+              value: RELEASE-NAME
             - name: PERFINO
               value: 'false'
             - name: OVEROPS
               value: 'false'
             - name: SERVICE_NAME
-              value: 'spring-boot-app'
+              value: 'estore-auth'
             - name: LOCAL_USER_ID
               value: '9001'
-            - name: CLOUDHSM_IP
-              value: ''
-
             - name: JAVA_OPTS
               value: -noverify -XX:-UseAdaptiveSizePolicy -XX:+UseG1GC -XX:MaxGCPauseMillis=200
                 -XX:InitiatingHeapOccupancyPercent=70 -XX:MinRAMPercentage=30.0 -XX:InitialRAMPercentage=40.0
                 -XX:MaxRAMPercentage=50.0 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:ParallelGCThreads=4
             - name: JAVA_OPTS1
               value: -Djava.util.concurrent.ForkJoinPool.common.parallelism=4 -Dserver.tomcat.min-spare-threads=2
-            
           resources:
             limits:
               cpu: "4"
@@ -237,12 +487,11 @@ spec:
             requests:
               cpu: 100m
               memory: 800Mi
-            
       restartPolicy: Always
       volumes:
         - name: application-configvolume
           configMap:
-            name: spring-boot-app
+            name: estore-auth
             items:
               - key: application.yml
                 path: application.yml
@@ -252,69 +501,380 @@ spec:
             items:
               - key: logback.xml
                 path: logback.xml
-
-      imagePullSecrets:
-        - name: dtrcred
-
 ---
-# Source: estore/charts/spring-boot-app/templates/ingress-mgmt.yaml
+# Source: estore-demo/charts/estore-web/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: estore-web
+  labels:
+    app.kubernetes.io/name: estore-web
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-web-0.1.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: estore-web
+      app.kubernetes.io/instance: RELEASE-NAME
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: estore-web
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: 1.0.0-SNAPSHOT
+        app.kubernetes.io/component: estore
+        app.kubernetes.io/part-of: project-demo
+      annotations:
+        checksum/application.config: 680b4f50dbc73ebe7c056a08a49c22fb89f32cdb271ce1768ae5099bc398072a
+        checksum/application.logback: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    spec:
+      containers:
+        - name: estore-web
+          image: 'harihar2u/project-demo/estore/estore-web:0.0.1-SNAPSHOT'
+#          imagePullPolicy: Always
+          ports:
+            - name: app
+              containerPort: 8081
+              protocol: TCP
+            - name: mgmt
+              containerPort: 8181
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: mgmt
+            initialDelaySeconds: 300
+            periodSeconds: 10
+            timeoutSeconds: 7
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: mgmt
+            initialDelaySeconds: 300
+            periodSeconds: 10
+            timeoutSeconds: 7
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - name: application-configvolume
+              mountPath: /opt/app/java/config/application.yml
+              subPath: application.yml
+              readOnly: true
+            - name: application-logback-configvolume
+              mountPath: /opt/app/java/config/logback.xml
+              subPath: logback.xml
+              readOnly: true
+          env:
+            - name: SPRING_CONFIG_LOCATION
+              value: file:./config/
+            - name: SPRING_PROFILES_ACTIVE
+              value: boot
+            - name: DEPLOYMENT_NAME
+              value: RELEASE-NAME
+            - name: PERFINO
+              value: 'false'
+            - name: OVEROPS
+              value: 'false'
+            - name: SERVICE_NAME
+              value: 'estore-web'
+            - name: LOCAL_USER_ID
+              value: '9001'
+            - name: JAVA_OPTS
+              value: -noverify -XX:-UseAdaptiveSizePolicy -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+                -XX:InitiatingHeapOccupancyPercent=70 -XX:MinRAMPercentage=30.0 -XX:InitialRAMPercentage=40.0
+                -XX:MaxRAMPercentage=50.0 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:ParallelGCThreads=4
+            - name: JAVA_OPTS1
+              value: -Djava.util.concurrent.ForkJoinPool.common.parallelism=4 -Dserver.tomcat.min-spare-threads=2
+          resources:
+            limits:
+              cpu: "4"
+              memory: 1.5Gi
+            requests:
+              cpu: 100m
+              memory: 800Mi
+      restartPolicy: Always
+      volumes:
+        - name: application-configvolume
+          configMap:
+            name: estore-web
+            items:
+              - key: application.yml
+                path: application.yml
+        - name: application-logback-configvolume
+          configMap:
+            name: log-configmap
+            items:
+              - key: logback.xml
+                path: logback.xml
+---
+# Source: estore-demo/charts/estore-ws/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: estore-ws
+  labels:
+    app.kubernetes.io/name: estore-ws
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-ws-0.1.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: estore-ws
+      app.kubernetes.io/instance: RELEASE-NAME
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: estore-ws
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: 1.0.0-SNAPSHOT
+        app.kubernetes.io/component: estore
+        app.kubernetes.io/part-of: project-demo
+      annotations:
+        checksum/application.config: 9ecd9a2464b44cd11550ea91e95bbae0160c51437b6a3d7e2b6fa790a93d4b4f
+        checksum/application.logback: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    spec:
+      containers:
+        - name: estore-ws
+          image: 'harihar2u/project-demo/estore/estore-rest:0.0.1-SNAPSHOT'
+#          imagePullPolicy: Always
+          ports:
+            - name: app
+              containerPort: 8081
+              protocol: TCP
+            - name: mgmt
+              containerPort: 8181
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: mgmt
+            initialDelaySeconds: 300
+            periodSeconds: 10
+            timeoutSeconds: 7
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: mgmt
+            initialDelaySeconds: 300
+            periodSeconds: 10
+            timeoutSeconds: 7
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - name: application-configvolume
+              mountPath: /opt/app/java/config/application.yml
+              subPath: application.yml
+              readOnly: true
+            - name: application-logback-configvolume
+              mountPath: /opt/app/java/config/logback.xml
+              subPath: logback.xml
+              readOnly: true
+          env:
+            - name: SPRING_CONFIG_LOCATION
+              value: file:./config/
+            - name: SPRING_PROFILES_ACTIVE
+              value: boot
+            - name: DEPLOYMENT_NAME
+              value: RELEASE-NAME
+            - name: PERFINO
+              value: 'false'
+            - name: OVEROPS
+              value: 'false'
+            - name: SERVICE_NAME
+              value: 'estore-ws'
+            - name: LOCAL_USER_ID
+              value: '9001'
+            - name: JAVA_OPTS
+              value: -noverify -XX:-UseAdaptiveSizePolicy -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+                -XX:InitiatingHeapOccupancyPercent=70 -XX:MinRAMPercentage=30.0 -XX:InitialRAMPercentage=40.0
+                -XX:MaxRAMPercentage=50.0 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:ParallelGCThreads=4
+            - name: JAVA_OPTS1
+              value: -Djava.util.concurrent.ForkJoinPool.common.parallelism=4 -Dserver.tomcat.min-spare-threads=2
+          resources:
+            limits:
+              cpu: "4"
+              memory: 1.5Gi
+            requests:
+              cpu: 100m
+              memory: 800Mi
+      restartPolicy: Always
+      volumes:
+        - name: application-configvolume
+          configMap:
+            name: estore-ws
+            items:
+              - key: application.yml
+                path: application.yml
+        - name: application-logback-configvolume
+          configMap:
+            name: log-configmap
+            items:
+              - key: logback.xml
+                path: logback.xml
+---
+# Source: estore-demo/charts/estore-auth/templates/ingress-mgmt.yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: spring-boot-app-mgmt
+  name: estore-auth-mgmt
   labels:
-    app.kubernetes.io/name: spring-boot-app-mgmt
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: estore-auth-mgmt
+    app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
     app.kubernetes.io/component: estore
-    app.kubernetes.io/part-of: payments-product
-    helm.sh/chart: spring-boot-app-0.1.0
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-auth-0.1.0
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
-    
 spec:
   rules:
     - http:
         paths:
           - path: /app-mgmt(/|$)(.*)
             backend:
-              serviceName: spring-boot-app
+              serviceName: estore-auth
               servicePort: mgmt
-
 ---
-# Source: estore/charts/spring-boot-app/templates/ingress.yaml
+# Source: estore-demo/charts/estore-auth/templates/ingress.yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: spring-boot-app
+  name: estore-auth
   labels:
-    app.kubernetes.io/name: spring-boot-app
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: estore-auth
+    app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
     app.kubernetes.io/component: estore
-    app.kubernetes.io/part-of: payments-product
-    helm.sh/chart: spring-boot-app-0.1.0
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-auth-0.1.0
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    
 spec:
   rules:
     - http:
         paths:
           - path: /app
             backend:
-              serviceName: spring-boot-app
+              serviceName: estore-auth
               servicePort: app
-
 ---
-# Source: estore/charts/spring-boot-app/templates/configmap-ca.yaml
-
+# Source: estore-demo/charts/estore-web/templates/ingress-mgmt.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: estore-web-mgmt
+  labels:
+    app.kubernetes.io/name: estore-web-mgmt
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-web-0.1.0
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /app-mgmt(/|$)(.*)
+            backend:
+              serviceName: estore-web
+              servicePort: mgmt
 ---
-# Source: estore/charts/spring-boot-app/templates/configmap-logback.yaml
-
+# Source: estore-demo/charts/estore-web/templates/ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: estore-web
+  labels:
+    app.kubernetes.io/name: estore-web
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-web-0.1.0
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /app
+            backend:
+              serviceName: estore-web
+              servicePort: app
 ---
-# Source: estore/templates/configmap-logback.yaml
-
+# Source: estore-demo/charts/estore-ws/templates/ingress-mgmt.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: estore-ws-mgmt
+  labels:
+    app.kubernetes.io/name: estore-ws-mgmt
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-ws-0.1.0
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /app-mgmt(/|$)(.*)
+            backend:
+              serviceName: estore-ws
+              servicePort: mgmt
+---
+# Source: estore-demo/charts/estore-ws/templates/ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: estore-ws
+  labels:
+    app.kubernetes.io/name: estore-ws
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/component: estore
+    app.kubernetes.io/part-of: project-demo
+    helm.sh/chart: estore-ws-0.1.0
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /app
+            backend:
+              serviceName: estore-ws
+              servicePort: app

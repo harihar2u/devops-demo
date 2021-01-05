@@ -1,0 +1,35 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "migration.name" . }}-clean
+  labels:
+    app.kubernetes.io/name: {{ include "migration.name" . }}-clean
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Values.appVersion }}
+    app.kubernetes.io/component: {{ .Values.image.organization }}
+    app.kubernetes.io/part-of: {{ .Values.global.partOf }}
+    helm.sh/chart: {{ include "migration.chart" . }}
+spec:
+  # Do not touch below never-run schedule! It is intentionally set to that date for never run and become only a template
+  schedule: "0 0 31 2 0"
+  # Do not touch below suspend true setting. It is intentionally set to that to make it only template for migration jobs
+  suspend: true
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: {{ .Chart.Name }}
+              image: '{{ .Values.global.image.repositoryServer }}/{{ .Values.image.organization }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+              imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+              args: ["-url={{ .Values.db.url }}",
+                     "-schemas={{ .Values.db.schema }}",
+                     "-user={{ .Values.db.username }}",
+                     "-password={{ .Values.db.password }}",
+                     "-configFile={{ .Values.db.configfile }}",
+                     "clean"]
+{{if .Values.global.imageRegistrySecret}}
+          imagePullSecrets:
+          - name: {{ .Values.global.imageRegistrySecret }}
+{{- end }}

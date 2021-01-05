@@ -1,0 +1,95 @@
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: postgres-config
+#  labels:
+#    app: db-estore
+#data:
+#  POSTGRES_DB: postgresdb
+#  POSTGRES_USER: estore
+#  POSTGRES_PASSWORD: estore
+#
+#---
+#
+#kind: PersistentVolume
+#apiVersion: v1
+#metadata:
+#  name: postgres-pv-volume
+#  labels:
+#    type: local
+#    app: db-estore
+#spec:
+#  storageClassName: manual
+#  capacity:
+#    storage: 5Gi
+#  accessModes:
+#    - ReadWriteMany
+#  hostPath:
+#    path: "/mnt/data"
+#
+#
+#---
+#
+#kind: PersistentVolumeClaim
+#apiVersion: v1
+#metadata:
+#  name: postgres-pv-claim
+#  labels:
+#    app: db-estore
+#spec:
+#  storageClassName: manual
+#  accessModes:
+#    - ReadWriteMany
+#  resources:
+#    requests:
+#      storage: 5Gi
+#
+#---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-estore
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-estore
+  template:
+    metadata:
+      labels:
+        app: db-estore
+    spec:
+      containers:
+        - name: db-estore
+          image: harihar2u/project-demo/estore/estore-postgres:0.0.1-SNAPSHOT
+#           imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-estore
+  labels:
+    app: db-estore
+spec:
+  type: NodePort
+  ports:
+   - port: 5432
+     protocol: TCP
+     nodePort: 32080
+  selector:
+   app: db-estore

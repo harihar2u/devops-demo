@@ -1,7 +1,41 @@
-appVersion: 1.0.0-SNAPSHOT
+global:
+  environment: dev
+  partOf: project-demo
+  perfino: false
+  overops: false
+  localUserID: "9001"
+#  imageRegistrySecret: dtrcred
+  logConfigMapGenerate: true
+  logbackType: console
+  logsVolume:
+  logConfigMapName: log-configmap
+  sharedComponentName: shared
+  requestedHost: http://localhost
+  ingress:
+    enabled: true
+  image:
+    repositoryServer: harihar2u/project-demo
+    pullPolicy: Always
+    referenceImageDigest: false
+  nodeSelector:
+    enabled: false
 
+nameOverride: ""
+appVersion: 1.0.0-SNAPSHOT
 image:
   organization: estore
+  repository: ""
+  tag: 1.0.0-SNAPSHOT
+  tagStr: 1.0.0-SNAPSHOT
+
+createLogConfigMap: true
+# this values should be passed with --set-file param eg
+# --set-file application.config=config/application.yml
+# --set-file application.logback=config/logback-console.xml
+# logback one is only applicable if createLogConfigMap value is true
+application:
+  config: ""
+  logback: ""
 
 springProfiles:
 
@@ -17,25 +51,21 @@ ingress:
   path: /app
   pathmgmt: /app-mgmt
   #host: chart-example.local
-  tls: []
+  tls: [ ]
 #  - secretName: chart-example-tls
 #    hosts:
 #      - chart-example.local
 
 replicaCount: 1
-
 rollingUpdate:
   maxSurge: 1
   maxUnavailable: 1
-
 service:
   type: ClusterIP
   port:
     app: 8081
     mgmt: 8181
-
 restartPolicy: Always
-
 probe:
   # Number of seconds after the container has started before liveness or readiness probes are initiated.
   initialDelaySeconds: 300
@@ -47,69 +77,26 @@ probe:
   successThreshold: 1
   # When a Pod starts and the probe fails, Kubernetes will try failureThreshold times before giving up. Giving up in case of liveness probe means restarting the Pod. In case of readiness probe the Pod will be marked Unready. Defaults to 3. Minimum value is 1.
   failureThreshold: 3
-
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    requests:
-      memory: 800Mi
-      cpu: 100m
-    limits:
-      memory: 1.5Gi
-      cpu: "4"
-
+  requests:
+    memory: 800Mi
+    cpu: 100m
+  limits:
+    memory: 1.5Gi
+    cpu: "4"
 java_opts_env:
   - name: JAVA_OPTS
     value: -noverify -XX:-UseAdaptiveSizePolicy -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=70 -XX:MinRAMPercentage=30.0 -XX:InitialRAMPercentage=40.0 -XX:MaxRAMPercentage=50.0 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:ParallelGCThreads=4
   - name: JAVA_OPTS1
     value: -Djava.util.concurrent.ForkJoinPool.common.parallelism=4 -Dserver.tomcat.min-spare-threads=2
 
-env: []
+env: [ ]
+nodeSelector: { }
+tolerations: [ ]
+affinity: { }
 
-nodeSelector: {}
 
-tolerations: []
-
-affinity: {}
-
-nameOverride: ""
-
-# this values should be passed with --set-file param eg
-# --set-file application.config=config/application.yml
-# --set-file application.logback=config/logback-console.xml
-# logback one is only applicable if createLogConfigMap value is true
-application:
-  config: ""
-  logback: ""
-
-createLogConfigMap: false
-
-global:
-  environment: dev
-  cloudhsm:
-    enabled: false
-    cloudHsmIP:
-    caConfigMapName: ca-configmap
-    customerCA: ""
-  ncipherhsm:
-    enabled: false
-    # leave ip empty if you want pods to use local host IP valueFrom.fieldRef.fieldPath: status.hostIP
-    ip:
-    serverPort: 9000
-    serverPrivPort: 9011
-
-  partOf: payments-product
-  perfino: false
-  overops: false
-  localUserID: "9001"
-  imageRegistrySecret: dtrcred
-  logbackType: console
-  logsVolume:
-  ingress:
-    enabled: true
-#  image:
-#    repositoryServer: nr-dtr.rambus.com
-#    pullPolicy: Always
-#    referenceImageDigest: true

@@ -1,0 +1,26 @@
+global:
+  partOf: project-demo
+  imageRegistrySecret: dtrcred
+  image:
+    repositoryServer: docker.io
+    pullPolicy: Always
+    referenceImageDigest: true
+
+nameOverride: ""
+appVersion: 1.0.0-SNAPSHOT
+image:
+  organization: estore
+  repository: project-demo
+  tag: 1.0.0-SNAPSHOT
+  tagStr: 1.0.0-SNAPSHOT
+
+db:
+  url: jdbc:postgresql://db:5432/postgres
+  schema: xschema
+  username: username
+  password: secret
+  configfile: conf/flyway.conf
+
+
+
+

@@ -17,12 +17,12 @@ spec:
       targetPort: app
       protocol: TCP
       name: app
-{{- if not (eq .Values.global.environment "prod") }}
-    - port: {{ .Values.service.port.mgmt }}
-      targetPort: mgmt
-      protocol: TCP
-      name: mgmt
-{{- end }}
+#{{- if not (eq .Values.global.environment "prod") }}
+#    - port: {{ .Values.service.port.mgmt }}
+#      targetPort: mgmt
+#      protocol: TCP
+#      name: mgmt
+#{{- end }}
   selector:
     app.kubernetes.io/name: {{ include "service.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

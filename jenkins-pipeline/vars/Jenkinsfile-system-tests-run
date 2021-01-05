@@ -1,0 +1,164 @@
+#!groovy
+
+dc = "docker-compose --compatibility --no-ansi -f docker-compose.yml -f docker-compose.config.yml -f docker-compose.qa.yml"
+backtonormal = false
+
+node('beast') {
+    try {
+        wipeWS()
+        cloneRepo()
+        prepareDockerComposeEnvVariables()
+        dockercomposePull()
+        dockerComposeDown()
+        def testResult = runTests()
+        archieveTestResults()
+
+        if ('0' == testResult.trim()) {
+            if (!hudson.model.Result.SUCCESS.toString().equals(currentBuild.getPreviousBuild().getResult())) {
+                backtonormal = true
+            }
+            currentBuild.result = 'SUCCESS'
+        } else {
+            currentBuild.result = 'UNSTABLE'
+        }
+    } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException | hudson.AbortException abortex) {
+        currentBuild.result = 'ABORTED'
+        throw abortex
+    } catch (Exception err) {
+        currentBuild.result = 'FAILURE'
+        throw err
+    } finally {
+        dockerComposeDown()
+        sendNotification()
+        wipeWS()
+    }
+}
+
+private void cloneRepo() {
+    stage('Clone') {
+        checkout scm: [$class: 'GitSCM',
+                       branches: [[name: "${TARGET_BRANCH}"]],
+                       userRemoteConfigs: [[url: 'ssh://git@nr-bitbucket.rambus.com:7999/col/coles-dps.git', credentialsId: 'ada0dfb7-9075-4c9d-9977-5e85fc3ded90']]],
+                changelog: false, poll: false
+    }
+}
+
+private void prepareDockerComposeEnvVariables() {
+    stage('PrepDCEnvVars') {
+        def pom = readMavenPom(file: 'pom.xml')
+
+        def registryURL = "nr-dtr.rambus.com"
+        def composeprojname = "colessystemtests${EXECUTOR_NUMBER}"
+        def testResultsDir = "${WORKSPACE}/systemtestsresults"
+        def serviceLogsDir = "${WORKSPACE}/servicelogs"
+        def deploymentName = "colessystemtests#${BUILD_NUMBER}:${pom.version}"
+
+        def cmn_version = pom.parent.version
+        def upp_version = pom.properties['upp.version']
+        def uppgw_version = pom.properties['uppgw.version']
+        def tkm_version = pom.properties['tkm.version']
+        def asptsm_version = pom.properties['asptsm.version']
+        def dvmcsp_version = pom.properties['dvmcsp.version']
+        def dpsui_version = pom.properties['dpsui.version']
+        def dpslcm_version = pom.properties['dpslcm.version']
+        def tgtestdata_version = pom.properties['tgtestdata.version']
+        def upptestdata_version = pom.properties['upptestdata.version']
+        def coles_project_version = pom.properties['coles-dps.version']
+
+
+        sh script: "cp docker-compose.env .env"
+        sh script: "sed -i s/@compose.project.name@/${composeprojname}/ .env"
+        sh script: "sed -i s/@deployment.name@/${deploymentName}/ .env"
+        sh script: "sed -i s/@common.version@/${cmn_version}/ .env"
+        sh script: "sed -i s/@upp.version@/${upp_version}/ .env"
+        sh script: "sed -i s/@uppgw.version@/${uppgw_version}/ .env"
+        sh script: "sed -i s/@tkm.version@/${tkm_version}/ .env"
+        sh script: "sed -i s/@asptsm.version@/${asptsm_version}/ .env"
+        sh script: "sed -i s/@dvmcsp.version@/${dvmcsp_version}/ .env"
+        sh script: "sed -i s/@dpsui.version@/${dpsui_version}/ .env"
+        sh script: "sed -i s/@dpslcm.version@/${dpslcm_version}/ .env"
+        sh script: "sed -i s/@coles-dps.version@/${coles_project_version}/ .env"
+        sh script: "sed -i s/@tgtestdata.version@/${tgtestdata_version}/ .env"
+        sh script: "sed -i s/@upptestdata.version@/${upptestdata_version}/ .env"
+		sh script: "sed -i 's|@baseurl@|http://localhost|g' .env"
+        sh script: "sed -i -e \"\\\$aDOCKER_REGISTRY=${registryURL}\" .env"
+        sh script: "sed -i -e \"\\\$aTEST_RESULTS_VOLUME=${testResultsDir}\" .env"
+        sh script: "sed -i -e \"\\\$aLOGS_VOLUME=${serviceLogsDir}\" .env"
+        sh script: "sed -i -e \"\\\$aLOCAL_USER_ID=`id -u $USER`\" .env"
+        sh script: "sed -i -e \"\\\$aCOMPOSE_HTTP_TIMEOUT=300\" .env"
+        sh script: "sed -i -e \"\\\$aLOGBACK_TYPE=file\" .env"
+        sh script: "cat .env"
+
+        withCredentials([usernamePassword(credentialsId: 'awsses_credentials', usernameVariable: 'SMTP_LOGIN', passwordVariable: 'SMTP_PASSWORD')]) {
+            sh script: "sed -i -e \"\\\$aSMTP_LOGIN=${SMTP_LOGIN}\" .env"
+            sh script: "sed -i -e \"\\\$aSMTP_PASSWORD=${SMTP_PASSWORD}\" .env"
+        }
+        withCredentials([usernamePassword(credentialsId: 'jenkins-aws-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+            sh script: "sed -i -e \"\\\$aAWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}\" .env"
+            sh script: "sed -i -e \"\\\$aAWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}\" .env"
+        }
+    }
+}
+
+private void dockercomposePull() {
+    stage('DCPull') {
+        sh script: "${dc} pull"
+    }
+}
+
+private def runTests() {
+    stage('RunTests') {
+        timeout(time: 120, unit: 'MINUTES') {
+            def testcontname = "colessystemtests${EXECUTOR_NUMBER}-run"
+            sh script: "${dc} run --rm -d --use-aliases --name ${testcontname} -e LOCAL_USER_ID=`id -u $USER` ${SYSTEM_TESTS_SERVICE} ${SYSTEM_TESTS_PARAM}"
+            return sh(script: "docker wait ${testcontname}", returnStdout: true)
+        }
+    }
+}
+
+private void archieveTestResults() {
+    stage('ArchieveTestResults') {
+        publishHTML([reportDir: 'systemtestsresults/html/tests/testWithWireMock', reportFiles: 'index.html', reportName: 'JUnit Report', allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportTitles: ''])
+        publishHTML([reportDir: 'systemtestsresults/spock', reportFiles: 'index.html', reportName: 'Spock Report', allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportTitles: ''])
+        junit(testResults: 'systemtestsresults/junit/**/*.xml', keepLongStdio: true)
+        zip(dir: 'systemtestsresults/logs', zipFile: 'test_run_console_log.zip', archive: true)
+        zip(dir: 'servicelogs', zipFile: 'service_logs.zip', archive: true)
+    }
+}
+
+private void dockerComposeDown() {
+    stage('DCDown') {
+        sh script: "${dc} down -v"
+    }
+}
+
+private void sendNotification() {
+    stage('SendNotification') {
+        if ('SUCCESS' != currentBuild.result || backtonormal) {
+            def resultStr = backtonormal ? 'BACK_TO_NORMAL' : currentBuild.result
+            //hipchatSend(notify: true, room: '239', credentialId: 'hipchat_dps_token', color: getColor(currentBuild.result), message: "<b><a href=\"${BUILD_URL}\">${JOB_NAME}#${BUILD_NUMBER}</a> ${resultStr}</b>")
+            emailext body: "${BUILD_URL}", subject: "${resultStr}: ${BUILD_TAG}", recipientProviders: [[$class: 'UpstreamComitterRecipientProvider']], to: 'ataherkordi@rambus.com,lcabenda@rambus.com,xlin@rambus.com,ccirit@rambus.com'
+        }
+    }
+}
+
+private String getColor(state) {
+    switch (state) {
+        case 'SUCCESS':
+            return 'GREEN'
+        case 'UNSTABLE':
+            return 'YELLOW'
+        case 'FAILURE':
+            return 'RED'
+        case 'ABORTED':
+            return 'GRAY'
+        default:
+            return 'RANDOM'
+    }
+}
+
+private void wipeWS() {
+    stage('WipeWS') {
+        step([$class: 'WsCleanup'])
+    }
+}

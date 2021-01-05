@@ -37,9 +37,8 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          #image: '{{ .Values.global.image.repositoryServer }}/{{ .Values.image.organization }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}'
-          image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
-          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          image: '{{ .Values.global.image.repositoryServer }}/{{ .Values.image.organization }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+#          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
           ports:
             - name: app
               containerPort: 8081
@@ -69,12 +68,6 @@ spec:
             - name: logs-hostpathvolume
               mountPath: /home/appuser/logs
 {{- end }}
-{{- if .Values.global.cloudhsm.enabled }}
-            - name: ca-certvolume
-              mountPath: /opt/cloudhsm/etc/customerCA.crt
-              subPath: customerCA.crt
-              readOnly: true
-{{- end }}
             - name: application-configvolume
               mountPath: /opt/app/java/config/application.yml
               subPath: application.yml
@@ -102,24 +95,6 @@ spec:
               value: '{{ include "service.name" . }}'
             - name: LOCAL_USER_ID
               value: '{{ .Values.global.localUserID }}'
-            - name: CLOUDHSM_IP
-              value: '{{ .Values.global.cloudhsm.cloudHsmIP }}'
-{{- if .Values.global.ncipherhsm.enabled }}
-            - name: NFAST_SERVER_PORT
-              value: {{ .Values.global.ncipherhsm.serverPort | quote}}
-            - name: NFAST_SERVER_PRIVPORT
-              value: {{ .Values.global.ncipherhsm.serverPrivPort | quote}}
-{{- if .Values.global.ncipherhsm.ip }}
-            - name: NFAST_IP
-              value: {{ .Values.global.ncipherhsm.ip | quote}}
-{{- else }}
-            - name: NFAST_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-{{- end }}
-{{- end }}
-
 {{ toYaml .Values.java_opts_env | indent 12 }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 12 }}
@@ -146,17 +121,9 @@ spec:
             items:
               - key: logback.xml
                 path: logback.xml
-{{- if .Values.global.cloudhsm.enabled }}
-        - name: ca-certvolume
-          configMap:
-            name: {{ .Values.global.cloudhsm.caConfigMapName }}
-            items:
-                - key: customerCA.crt
-                  path: customerCA.crt
-{{- end }}
 {{if .Values.global.imageRegistrySecret}}
       imagePullSecrets:
-        - name: {{ .Values.global.imageRegistrySecret }}
+          - name: {{ .Values.global.imageRegistrySecret }}
 {{- end }}
 {{- if .Values.global.nodeSelector.enabled }}
     {{- with .Values.nodeSelector }}

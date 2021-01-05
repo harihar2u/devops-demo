@@ -29,15 +29,14 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          #image: '{{ .Values.global.image.repositoryServer }}/{{ .Values.image.organization }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}'
           image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
           imagePullPolicy: {{ .Values.global.image.pullPolicy }}
           ports:
             - name: persistence
               containerPort: {{ .Values.container.port }}
               protocol: TCP
-          livenessProbe:
-{{ toYaml .Values.livenessProbe | indent 12 }}
+#          livenessProbe:
+#{{ toYaml .Values.livenessProbe | indent 12 }}
 {{- if .Values.persistenceVolume.mount }}
           volumeMounts:
             - name: persistencevolume

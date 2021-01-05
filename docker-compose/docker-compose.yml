@@ -1,0 +1,67 @@
+version: '3.3'
+services:
+  estore-ws:
+    image: "harihar2u/project-demo/estore/estore-rest:0.0.1-SNAPSHOT"
+    ports:
+       - 8082:8082
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 1536M
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 10s
+      update_config:
+        parallelism: 1
+        delay: 60s
+        failure_action: pause
+    hostname: estore-ws
+    depends_on:
+          - db-estore
+    volumes:
+      - ${LOGS_VOLUME:-logs}:/home/appuser/logs
+      - ./config/application.yml:/opt/app/java/config/application.yml:ro
+      - ./config/logback-console.xml:/opt/app/java/config/logback.xml:ro
+    networks:
+      - network
+    environment:
+      - JAVA_OPTS=-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=70
+      - DEPLOYMENT_NAME=${DEPLOYMENT_NAME:-Test}
+      - OVEROPS=${OVEROPS:-false}
+      - SPRING_CONFIG_LOCATION=file:./config/
+      - SPRING_PROFILES_ACTIVE=boot
+  db-estore:
+    image: "postgres:10.4"
+    ports:
+       - 23331:5432
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 60s
+        failure_action: pause
+    hostname: db-estore
+    volumes:
+      - dbdata-estore:/var/lib/postgresql/data
+    networks:
+      - network
+
+networks:
+  network:
+    driver: overlay
+    attachable: true
+
+volumes:
+  logs:
+  dbdata-estore:
+
+

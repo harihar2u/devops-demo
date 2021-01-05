@@ -1,6 +1,0 @@
----
-# Source: estore/charts/spring-boot-app/templates/NOTES.txt
-1. Get the application URL by running these commands:
-  export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=spring-boot-app,app.kubernetes.io/instance=release-name" -o jsonpath="{.items[0].metadata.name}")
-  echo "Visit http://127.0.0.1:8080 to use your application"
-  kubectl port-forward $POD_NAME 8080:80
